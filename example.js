@@ -1,5 +1,3 @@
-// sonarqube-test.js
-
 // Unused variable
 const unusedVariable = "This variable is unused";
 
