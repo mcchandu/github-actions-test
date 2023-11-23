@@ -9,5 +9,7 @@ jobs:
 
       - name: Run Snyk to check for vulnerabilities in Terraform files
         uses: snyk/actions/terraform@latest_version
+        with:
+          working-directory: path/to/terraform/files
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
