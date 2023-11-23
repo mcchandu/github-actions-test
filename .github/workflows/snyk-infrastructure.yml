@@ -4,9 +4,10 @@ jobs:
   security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Run Snyk to check for vulnerabilities in Terraform files
-        uses: snyk/actions/terraform@master
+        uses: snyk/actions/terraform@latest_version
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
