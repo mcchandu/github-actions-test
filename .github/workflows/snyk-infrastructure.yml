@@ -1,12 +1,12 @@
-name: workflow for Maven using Snyk security scan
+name: Snyk Security Scan for Terraform
 on: push
 jobs:
   security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/maven@master
-        continue-on-error: true
+      - uses: actions/checkout@v2
+
+      - name: Run Snyk to check for vulnerabilities in Terraform files
+        uses: snyk/actions/terraform@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
