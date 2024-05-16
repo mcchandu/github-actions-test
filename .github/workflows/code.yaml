@@ -30,18 +30,9 @@ jobs:
           aws-region: us-east-1
           role-session-name: github-action
 
-      - name: List branches for debugging
-        run: git branch -a
-
-      - name: Check out the main branch
-        run: git checkout main
-
       - name: Sync up to CodeCommit
         run: |
-          git remote add codecommit https://git-codecommit.us-east-1.amazonaws.com/v1/repos/test-repo
+          git config --global credential.helper '!aws codecommit credential-helper $@'
+          git config --global credential.UseHttpPath true
+          git remote add codecommit https://${{ secrets.CODECOMMIT_USERNAME }}:${{ secrets.CODECOMMIT_PASSWORD }}@git-codecommit.us-east-1.amazonaws.com/v1/repos/test-repo
           git push codecommit main --force
-        env:
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
