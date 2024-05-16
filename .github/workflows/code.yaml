@@ -30,9 +30,11 @@ jobs:
           aws-region: us-east-1
           role-session-name: github-action
 
+      - name: Build Docker image
+        run: docker build -t custom-sync-action .
+
       - name: Sync up to CodeCommit
         run: |
-          # Configure Git to trust the workspace directory inside the Docker container
           docker run --rm \
             -e AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }} \
             -e AWS_REGION=${{ secrets.AWS_REGION }} \
@@ -40,7 +42,7 @@ jobs:
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
             -v "${{ github.workspace }}":/github/workspace \
             -w /github/workspace \
-            tsgit18/sync-up-to-codecommit-action:v1 sh -c "git config --global --add safe.directory /github/workspace && /entrypoint.sh"
+            custom-sync-action
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
