@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/cypress
+      - feature/synctest
 
 permissions:
   id-token: write   # This is required for aws oidc connection
