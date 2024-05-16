@@ -23,6 +23,11 @@ jobs:
       - name: Configure Git to trust the workspace directory
         run: git config --global --add safe.directory /github/workspace
 
+      - name: Configure Git user identity
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
