@@ -28,6 +28,9 @@ jobs:
           git config --global user.email "you@example.com"
           git config --global user.name "Your Name"
 
+      - name: List files in the working directory
+        run: ls -al
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -41,5 +44,6 @@ jobs:
           git config --global credential.UseHttpPath true
           git checkout -b dev  # Create and checkout dev branch
           git add .              # Add all files to staging area
+          git status             # Display the status of the repository
           git commit -m "Initial commit"  # Commit changes
           git push -u codecommit dev  # Push dev branch to CodeCommit
