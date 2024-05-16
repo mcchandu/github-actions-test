@@ -2,10 +2,9 @@ name: sync up to codecommit
 
 on:
   push:
-    tags-ignore:
-      - '*'
     branches:
-      - '*'
+      - main
+
 permissions:
   id-token: write   # This is required for aws oidc connection
   contents: read   # This is required for actions/checkout
