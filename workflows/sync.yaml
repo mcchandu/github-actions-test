@@ -6,6 +6,11 @@ on:
       - '*'
     branches:
       - '*'
+permissions:
+  id-token: write   # This is required for aws oidc connection
+  contents: read   # This is required for actions/checkout
+  pull-requests: write  # This is required for gh bot to comment PR
+
 
 jobs:
   sync:
@@ -16,12 +21,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1.0.3
+      - name: configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.TEST_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.TEST_AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: arn:aws:iam::992382551538:role/github-action
           aws-region: us-east-1
+          role-session-name: github-action
 
       - name: Sync up to CodeCommit
         uses: tsgit18/sync-up-to-codecommit-action@v1
