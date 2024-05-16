@@ -30,6 +30,12 @@ jobs:
           aws-region: us-east-1
           role-session-name: github-action
 
+      - name: List branches for debugging
+        run: git branch -a
+
+      - name: Check out the main branch
+        run: git checkout main
+
       - name: Sync up to CodeCommit
         run: |
           git remote add codecommit https://git-codecommit.us-east-1.amazonaws.com/v1/repos/test-repo
