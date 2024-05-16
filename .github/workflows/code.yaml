@@ -20,7 +20,6 @@ jobs:
         with:
           fetch-depth: 0
 
-          
       - name: Configure Git to trust the workspace directory
         run: git config --global --add safe.directory /github/workspace
 
@@ -31,9 +30,11 @@ jobs:
           aws-region: us-east-1
           role-session-name: github-action
 
-      - name: Sync up to CodeCommit
+      - name: Create and push dev branch to CodeCommit
         run: |
           git config --global credential.helper '!aws codecommit credential-helper $@'
           git config --global credential.UseHttpPath true
-          git remote add codecommit https://${{ secrets.CODECOMMIT_USERNAME }}:${{ secrets.CODECOMMIT_PASSWORD }}@git-codecommit.us-east-1.amazonaws.com/v1/repos/test-repo
-          git push codecommit main --force
+          git checkout -b dev  # Create and checkout dev branch
+          git add .              # Add all files to staging area
+          git commit -m "Initial commit"  # Commit changes
+          git push -u codecommit dev  # Push dev branch to CodeCommit
