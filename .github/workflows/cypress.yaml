@@ -7,15 +7,13 @@ on:
       - cypress-test
 
 permissions:
-  id-token: write   # This is required for AWS OIDC connection
+  id-token: write   # This is required for aws oidc connection
   contents: read    # This is required for actions/checkout
-  pull-requests: write  # This is required for GH bot to comment PR
+  pull-requests: write  # This is required for gh bot to comment PR
 
 jobs:
   cypress:
-    runs-on: ubuntu-latest
-    container:
-      image: ubuntu:20.04  # Specify a valid Ubuntu version
+    runs-on: ubuntu-20.04  # Use a specific Ubuntu version to ensure package compatibility
 
     steps:
       - name: Checkout code
@@ -28,11 +26,10 @@ jobs:
 
       - name: Install package dependencies
         run: |
-          export DEBIAN_FRONTEND=noninteractive
-          apt-get update
-          apt-get install -y tzdata libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+          sudo apt-get update
+          sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb
 
-      - name: Install npm dependencies
+      - name: Install project dependencies
         run: |
           cd $GITHUB_WORKSPACE/automation-cypress
           npm install
@@ -41,15 +38,14 @@ jobs:
         working-directory: ./automation-cypress/
         run: |
           export TMPDIR=/tmp
+          echo "It looks like this is your first time using Cypress: 13.4.0"
           xvfb-run --auto-servernum npx cypress run -e allure=true --env TAGS='@regression'
         env:
           DISPLAY: :99.0
 
   generate-report:
     needs: cypress
-    runs-on: ubuntu-latest
-    container:
-      image: ubuntu:latest
+    runs-on: ubuntu-20.04  # Use the same Ubuntu version as the previous job
 
     steps:
       - name: Checkout code
@@ -60,13 +56,12 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install Java and setup aws-cli
+      - name: Install Java and AWS CLI
         run: |
-          apt-get update
-          apt-get install -y default-jre
-          apt-get install -y awscli
+          sudo apt-get update
+          sudo apt-get install -y default-jre awscli
 
-      - name: Install dependencies
+      - name: Install project dependencies
         run: |
           cd $GITHUB_WORKSPACE/automation-cypress
           npm install
@@ -75,17 +70,17 @@ jobs:
         working-directory: ./automation-cypress/
         run: npm run allure:report
 
-      - name: configure AWS credentials
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-            role-to-assume: arn:aws:iam::992382551538:role/github-action
-            aws-region: us-east-1
-            role-session-name: github-action
+          role-to-assume: arn:aws:iam:992382551538:role/github-action
+          aws-region: us-east-1
+          role-session-name: github-action
 
       - name: Upload report to S3 and display URI
         working-directory: ./automation-cypress/
         run: |
-            TIMESTAMP=$(date +"%Y%m%d%H%M%S")
-            aws s3 sync allure-report/ s3://${{ secrets.CYPRESS_REPORT_BUCKET }}/$TIMESTAMP/
-            URI="https://${{ secrets.CYPRESS_REPORT_BUCKET }}.s3.amazonaws.com/$TIMESTAMP/"
-            echo "Uploaded reports to URI: $URI"
+          TIMESTAMP=$(date +"%Y%m%d%H%M%S")
+          aws s3 sync allure-report/ s3://${{ secrets.CYPRESS_REPORT_BUCKET }}/$TIMESTAMP/
+          URI="https://${{ secrets.CYPRESS_REPORT_BUCKET }}.s3.amazonaws.com/$TIMESTAMP/"
+          echo "Uploaded reports to URI: $URI"
