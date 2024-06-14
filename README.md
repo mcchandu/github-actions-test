@@ -36,7 +36,6 @@ Install project dependencies with: npm i
    3. allure open
    4. You'll get a report like this one: GitHub Page - Allure Report Sample: https://joanesquivel.github.io/cypress-cucumber-boilerplate/
 
-
 ##  Sample repo to generate an allure report as an artifact using GH Actions
 
 * https://github.com/SeyiOG/newCyLearn2/blob/main/.github/workflows/cypress-allure-report.yml
